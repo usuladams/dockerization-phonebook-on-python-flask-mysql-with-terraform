@@ -5,5 +5,3 @@ RUN pip install -r requirements.txt
 COPY . .
 EXPOSE 80
 CMD python ./app/phonebook-app.py
-
-#python:3.10-alpine
