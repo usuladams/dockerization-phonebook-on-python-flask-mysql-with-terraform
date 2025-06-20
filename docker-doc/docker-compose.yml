@@ -1,0 +1,42 @@
+name: phonebook-app
+
+services:
+
+  bookstore:
+    image: phonebook-app:latest # önce build et!!!!
+    environment:
+      MYSQL_DATABASE_HOST: ${MYSQL_DATABASE_HOST}
+    networks:
+     - phonebook-net
+    ports:
+      - 80:80
+    restart: always
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql-vol:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3306"]
+      # test: ["CMD", "mysqladmin", "ping", "-h", "database", "-u", "root"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    networks:
+     - phonebook-net
+
+networks:
+  phonebook-net:
+
+volumes:
+  mysql-vol:
